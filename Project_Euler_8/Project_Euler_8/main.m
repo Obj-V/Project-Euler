@@ -34,7 +34,6 @@
 
 #import <Foundation/Foundation.h>
 
-
 unsigned long largestProductInSeries(NSString *inputString, int range)
 {
     unsigned long greatestProduct = 1;
