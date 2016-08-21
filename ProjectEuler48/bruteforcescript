@@ -1,0 +1,101 @@
+NSString* add (NSString* a, NSString* b)
+{
+    NSMutableString *shortStr;
+    NSMutableString *longStr;
+    if ([a length] < [b length]) {
+        shortStr = [a mutableCopy];
+        longStr = [b mutableCopy];
+    } else {
+        shortStr = [b mutableCopy];
+        longStr = [a mutableCopy];
+    }
+    
+    NSMutableString *sum = [NSMutableString string];
+    int shortStrLastIndex = (int)shortStr.length-1;
+    int longStrLastIndex = (int)longStr.length-1;
+    int carry = 0;
+    int i = ((int)shortStr.length < 10) ? (int)shortStr.length : 10;
+    
+    while (i > 0) {
+        int sInt = [[shortStr substringWithRange:NSMakeRange(shortStrLastIndex, 1)] intValue];
+        int lInt = [[longStr substringWithRange:NSMakeRange(longStrLastIndex, 1)] intValue];
+        int sumSL = sInt + lInt + carry;
+        
+        if (sumSL / 10 > 0) {
+            carry = sumSL / 10;
+            sumSL = sumSL % 10;
+        } else {
+            carry = 0;
+        }
+        
+        [sum insertString:[NSString stringWithFormat:@"%i", sumSL] atIndex:0];
+        if (sum.length > 10) {
+            break;
+        }
+        
+        i--;
+        shortStrLastIndex--;
+        longStrLastIndex--;
+    }
+    
+    if (shortStr.length != longStr.length && sum.length < 10) {
+        int remaining = (int)longStr.length - (int)shortStr.length - 1;
+        for (int i = remaining; i >= 0; i--) {
+            int lInt = [[longStr substringWithRange:NSMakeRange(i, 1)] intValue];
+            int sumSL = lInt + carry;
+            
+            if (sumSL / 10 > 0) {
+                carry = sumSL / 10;
+                sumSL = sumSL % 10;
+            } else {
+                carry = 0;
+            }
+            
+            [sum insertString:[NSString stringWithFormat:@"%i", sumSL] atIndex:0];
+        }
+        
+    }
+    
+    if (carry > 0 && sum.length < 10) {
+        [sum insertString:[NSString stringWithFormat:@"%i", carry] atIndex:0];
+    }
+    
+    return [sum copy];
+}
+
+NSString* multiply (NSString* a, NSString* b)
+{
+    //int aInt = [a intValue];
+    int bInt = [b intValue];
+    NSString *sum = @"0";
+    
+    for (int i = 0; i < bInt; i++) {
+        sum = add(sum, a);
+    }
+    
+    return sum;
+}
+
+NSString* iPower (int i)
+{
+    NSString *sum = @"1";
+    NSString *iStr = [NSString stringWithFormat:@"%i", i];
+    for (int j = 0; j < i; j++) {
+        //NSLog(@"iPower %@", sum);
+        sum = multiply(sum,iStr);
+    }
+    
+    return sum;
+}
+
+NSString* sumSeries (int upperBound)
+{
+    NSString *sumStr;
+    for (int i = 1; i <= upperBound; i++) {
+        NSLog(@"%i", i);
+        NSString *powerI = iPower(i);
+        sumStr = add(sumStr, powerI);
+    }
+    
+    return sumStr;
+}
